@@ -24,7 +24,7 @@
     });
 
     document.querySelector("#b").addEventListener("click", (e) => {
-      fetch("http://localhost:3000/comments/2", {
+      fetch("http://localhost:3000/comments/0248", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: 1, body: "1번글 댓글 수정", postId: 1 }),
