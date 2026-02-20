@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h3>json-server 실행.</h3>
+    <button id="a">댓글등록</button>
+    <button id="b">댓글수정</button>
+  </body>
+  <script>
+    // 1번글 댓글 추가.
+    // 추가된 글에 대한 수정.
+    document.querySelector("#a").addEventListener("click", (e) => {
+      fetch("http://localhost:3000/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body: "1번글 댓글 추가", postId: 1 }),
+      })
+        .then((resp) => resp.json())
+        .then((result) => console.log(result));
+    });
+
+    document.querySelector("#b").addEventListener("click", (e) => {
+      fetch("http://localhost:3000/comments/2", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: 1, body: "1번글 댓글 수정", postId: 1 }),
+      })
+        .then((resp) => resp.json())
+        .then((result) => console.log(result));
+    });
+  </script>
+</html>
