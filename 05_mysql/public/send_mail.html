@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>메일 발송 시스템</title>
+    <link rel="stylesheet" href="send.css" />
+  </head>
+  <body>
+    <div class="mail-container">
+      <header>
+        <h3>새 메시지 작성</h3>
+      </header>
+
+      <form id="mailForm">
+        <div class="input-group">
+          <label for="sender">발신자</label>
+          <input
+            type="email"
+            id="sender"
+            placeholder="보내는 사람의 이메일 주소"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="receiver">수신자</label>
+          <input
+            type="email"
+            id="receiver"
+            placeholder="받는 사람의 이메일 주소"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="subject">제목</label>
+          <input
+            type="text"
+            id="subject"
+            placeholder="제목을 입력하세요"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="content">내용</label>
+          <textarea
+            id="content"
+            rows="12"
+            placeholder="내용을 입력해주세요..."
+          ></textarea>
+        </div>
+
+        <div class="button-area">
+          <button type="button" class="btn-cancel">취소</button>
+          <button type="submit" class="btn-send">발송하기</button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      document.querySelector("#mailForm").addEventListener("submit", (e) => {
+        e.preventDefault(); //form submit 기본기능 차단하는 역할.
+        //필요항목
+        const from = document.querySelector("#sender").value;
+        const to = document.querySelector("#receiver").value;
+        const subject = document.querySelector("#subject").value;
+        const text = document.querySelector("#content").value;
+        if (!from || !to || !subject || !text) {
+          alert("필수 항목 입력");
+          return;
+        }
+        //fetch.
+        fetch("./api/mail", {
+          method: "post",
+          headers: { "Content-TYPE": "application/json" },
+          body: JSON.stringify({ from, to, subject, text }),
+        })
+          .then((resp) => resp.json())
+          .then((data) => {
+            console.log(data);
+          })
+          .catch((err) => console.log(err));
+      });
+    </script>
+  </body>
+</html>

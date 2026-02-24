@@ -1,7 +1,7 @@
 const mysql = require("mysql");
-const sql = require("./sql.js");
+const sql = require("./sql");
 
-// connection pool 생성.
+//connection pool
 const pool = mysql.createPool({
   connectionLimit: process.env.MYSQL_LIMIT,
   host: process.env.MYSQL_HOST,
@@ -11,29 +11,31 @@ const pool = mysql.createPool({
   database: process.env.MYSQL_DB,
 });
 
-// query 함수 생성.
+//query 함수.
 const query = async (alias, values) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      sql[alias], // 1) sql 구문.
-      values, // 2) query parameter => [값1, 값2, ...]
+      sql[alias], //1) sql구문.
+      values, //2) query parameter => [값1, 값2, ...]
       (error, results) => {
         if (error) {
           console.log(error);
           reject({ error });
-        } else resolve(results);
-      }, // 3) callback 함수.
+        } else {
+          resolve(results);
+        }
+      }, //3) callback 함수.
     );
   });
 };
 
 // async function exe() {
-//   const result = await query("customerInsert", [
+//   const results = await query("customerInsert", [
 //     "박우신",
 //     "park@email.com",
 //     "010-1234-1234",
 //   ]);
-//   console.log(result);
+//   console.log(results);
 // }
 // exe();
 module.exports = { query };
