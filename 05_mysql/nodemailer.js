@@ -1,5 +1,6 @@
 //nodemailer.js  터미널-npm install nodemailer 설치
 const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 const daumConfig = {
   host: "smtp.daum.net",
@@ -26,6 +27,20 @@ const send = async (data) => {
     });
   });
 };
+
+// send({
+//   from: "dmswl1806@daum.net",
+//   to: "adorable210@naver.com",
+//   subject: "파일첨부테스트",
+//   html: "<p>파일첨부연습</p>",
+//   attachments: [
+//     {
+//       filename: "딸기.jpg", // 파일명.
+//       path: __dirname + "/uploads/" + "딸기.jpg", // 실제 파일.
+//     },
+//   ],
+// });
+// console.log("main send...");
 
 // console.log("메일발송 호출.");
 module.exports = { send };

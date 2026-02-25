@@ -12,12 +12,18 @@
         <h3>새 메시지 작성</h3>
       </header>
 
-      <form id="mailForm">
+      <form
+        id="mailForm"
+        action="./api/mail"
+        method="post"
+        enctype="multipart/form-data"
+      >
         <div class="input-group">
           <label for="sender">발신자</label>
           <input
             type="email"
             id="sender"
+            name="from"
             placeholder="보내는 사람의 이메일 주소"
             required
           />
@@ -28,6 +34,7 @@
           <input
             type="email"
             id="receiver"
+            name="to"
             placeholder="받는 사람의 이메일 주소"
             required
           />
@@ -38,6 +45,7 @@
           <input
             type="text"
             id="subject"
+            name="subject"
             placeholder="제목을 입력하세요"
             required
           />
@@ -47,13 +55,14 @@
           <label for="content">내용</label>
           <textarea
             id="content"
+            name="text"
             rows="12"
             placeholder="내용을 입력해주세요..."
           ></textarea>
         </div>
         <div class="input-group">
           <label for="subject">첨부파일</label>
-          <input type="file" name="myfiles" />
+          <input type="file" name="myfile" />
         </div>
         <div class="button-area">
           <button type="button" class="btn-cancel">취소</button>
@@ -64,6 +73,7 @@
 
     <script>
       document.querySelector("#mailForm").addEventListener("submit", (e) => {
+        console.log(e);
         e.preventDefault(); //form submit 기본기능 차단하는 역할.
         //필요항목
         const from = document.querySelector("#sender").value;
@@ -74,15 +84,29 @@
           alert("필수 항목 입력");
           return;
         }
+        const formData = new FormData(); // multipart 요청.
+        formData.append("from", from);
+        formData.append("to", to);
+        formData.append("subject", subject);
+        formData.append("text", text);
+        formData.append("myfile", e.target[4].files[0]);
+
         //fetch.
         fetch("./api/mail", {
           method: "post",
-          headers: { "Content-TYPE": "application/json" },
-          body: JSON.stringify({ from, to, subject, text }),
+          // headers: { "Content-TYPE": "application/json" },
+          body: formData,
         })
           .then((resp) => resp.json())
           .then((data) => {
-            console.log(data);
+            console.log(data); // 서버의 정보를 확인.
+
+            if (data.retCode == "OK") {
+              alert("메일 발송");
+              location.reload();
+            } else {
+              alert("발송 실패");
+            }
           })
           .catch((err) => console.log(err));
       });

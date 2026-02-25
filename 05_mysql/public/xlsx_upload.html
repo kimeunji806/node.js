@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>엑셀 업로드</title>
+    <link rel="stylesheet" href="xlsx_upload.css" />
+  </head>
+  <body>
+    <div class="upload-card">
+      <div class="card-header">
+        <h3>엑셀 파일 업로드</h3>
+      </div>
+      <!-- method는 "post"로 수정, 파일을 보낼 땐 enctype 필수 -->
+      <form
+        id="xlsxForm"
+        action="/api/excel_upload"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        <label>첨부파일</label>
+        <!-- 엑셀 파일만 선택하도록 accept 속성 추가 -->
+        <input type="file" name="myFile" accept=".xlsx" required />
+        <div class="button-group">
+          <button type="button" class="btn-cancel">취소</button>
+          <button type="submit">업로드 시작</button>
+        </div>
+      </form>
+    </div>
+    <script>
+      document.querySelector("#xlsxForm").addEventListener("submit", (e) => {
+        // e.preventDefault();
+        // const form = e.target; // 이벤트 발생한 form
+        // const file = form.myFile.files[0]; // name 기준 접근
+        // console.log(file);
+        console.log(e);
+
+        const formData = new FormData();
+        formData.append("myfile", e.target[4].files[0]);
+        // formData.append("myFile", file);
+
+        fetch("/api/excel_upload", {
+          method: "post",
+          body: formData,
+        })
+          .then((reqp) => reqp.json())
+          .then((data) => {
+            console.log(data);
+          })
+          .catch((err) => console.log(err));
+      });
+    </script>
+  </body>
+</html>
