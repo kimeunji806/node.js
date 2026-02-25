@@ -6,8 +6,8 @@ const daumConfig = {
   port: 465,
   secure: true,
   auth: {
-    user: "dmswl1806@daum.net",
-    pass: "kybxxulmntdppzpb",
+    user: process.env.nodemailer_user,
+    pass: process.env.nodemailer_pass,
   },
 };
 

@@ -23,7 +23,7 @@ async function createPassword() {
         console.log("error=>", err);
         reject(err);
       }
-      // console.log(buf.toString("base64"));
+      console.log(buf.toString("base64"));
       // 생성된 랜덤 바이트(buf)를 base64 문자열로 변환
       // → 이 값이 salt로 사용됨
       resolve(buf.toString("base64")); // salt 변수에 저장.
