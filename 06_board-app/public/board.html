@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>게시글 등록</title>
+    <style>
+      /* 전체 배경 및 폰트 설정 */
+      body {
+        font-family:
+          "Pretendard",
+          -apple-system,
+          sans-serif;
+        background-color: #f5f7fa;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      /* 컨테이너 스타일 */
+      .container {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+      }
+
+      h3 {
+        margin-top: 0;
+        color: #333;
+        text-align: center;
+        margin-bottom: 25px;
+      }
+
+      /* 입력 그룹 스타일 */
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #555;
+      }
+
+      input[type="text"],
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        box-sizing: border-box; /* 패딩 포함 너비 계산 */
+        font-size: 14px;
+      }
+
+      textarea {
+        height: 150px;
+        resize: vertical; /* 세로로만 늘리기 가능 */
+      }
+
+      /* 입력창 포커스 효과 */
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #4a90e2;
+        box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+      }
+
+      /* 버튼 스타일 */
+      .submit-btn {
+        width: 100%;
+        padding: 14px;
+        background-color: #4a90e2;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .submit-btn:hover {
+        background-color: #357abd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h3>게시글 등록</h3>
+      <form>
+        <div class="form-group">
+          <label for="title">제목</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="제목을 입력하세요"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="author">작성자</label>
+          <input
+            type="text"
+            id="author"
+            name="author"
+            placeholder="이름을 입력하세요"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="content">내용</label>
+          <textarea
+            id="content"
+            name="content"
+            placeholder="내용을 작성해 주세요"
+          ></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">등록하기</button>
+      </form>
+    </div>
+    <script>
+      // fetch 활용해서 등록.
+      document.querySelector("form").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const title = document.querySelector("#title").value;
+        const author = document.querySelector("#author").value;
+        const content = document.querySelector("#content").value;
+        if (!title || !author || !content) {
+          alert("필수 항목 입력");
+          return;
+        }
+
+        const postData = {
+          title: title,
+          writer_id: author,
+          content: content,
+        };
+
+        fetch("/api/board/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(postData),
+        })
+          .then((resp) => resp.json())
+          .then((data) => {
+            console.log(data);
+
+            if (data.affectedRows === 1) {
+              alert("[등록 성공] 글목록으로 이동.");
+              // location.reload();
+              location.href = "boardList.html";
+            } else {
+              alert("등록 실패");
+            }
+          })
+          .catch((err) => console.log(err));
+      });
+    </script>
+  </body>
+</html>
