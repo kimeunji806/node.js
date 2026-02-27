@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>게시글 상세 보기</title>
     <style>
-      /* 목록 페이지와 동일한 톤앤매너 유지 */
+      /* 기존 스타일 유지 */
       body {
         font-family:
           "Pretendard",
@@ -28,7 +28,6 @@
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
       }
 
-      /* 제목 영역 */
       .detail-header {
         border-bottom: 2px solid #edf2f7;
         padding-bottom: 20px;
@@ -42,7 +41,6 @@
         color: #1a202c;
       }
 
-      /* 상단 메타 정보 (작성자, 날짜 등) */
       .detail-info {
         display: flex;
         gap: 20px;
@@ -55,17 +53,15 @@
         margin-right: 5px;
       }
 
-      /* 본문 영역 */
       .detail-content {
         min-height: 400px;
         line-height: 1.8;
         font-size: 16px;
         color: #2d3748;
-        white-space: pre-wrap; /* 줄바꿈 유지 */
+        white-space: pre-wrap;
         padding: 10px 5px;
       }
 
-      /* 하단 버튼 바 */
       .detail-footer {
         margin-top: 40px;
         padding-top: 20px;
@@ -86,7 +82,6 @@
         display: inline-block;
       }
 
-      /* 목록 버튼 (회색 테두리) */
       .btn-list {
         background-color: #fff;
         border-color: #cbd5e0;
@@ -96,7 +91,15 @@
         background-color: #f7fafc;
       }
 
-      /* 수정 버튼 (파란색) */
+      /* 새 글 등록 버튼 스타일 (녹색 계열로 포인트) */
+      .btn-write {
+        background-color: #48bb78;
+        color: white;
+      }
+      .btn-write:hover {
+        background-color: #38a169;
+      }
+
       .btn-edit {
         background-color: #4a90e2;
         color: white;
@@ -105,65 +108,131 @@
         background-color: #357abd;
       }
 
-      /* 삭제 버튼 (빨간색) */
       .btn-delete {
-        background-color: #fff;
+        background-color: #ff4343;
         border-color: #feb2b2;
-        color: #e53e3e;
+        color: #ffffff;
       }
       .btn-delete:hover {
-        background-color: #fff5f5;
+        background-color: #cf4040;
       }
 
       .btn-group {
         display: flex;
         gap: 10px;
       }
+      .btn-delete:disabled {
+        background-color: #fff5f5; /* 아주 연한 레드 배경 */
+        border-color: #fed7d7; /* 더 연한 테두리 색상 */
+        color: #feb2b2; /* 텍스트 색상 흐리게 */
+        cursor: not-allowed; /* 마우스 커서 금지 표시 */
+        opacity: 0.6; /* 전체적인 투명도 조절 (선택 사항) */
+      }
     </style>
   </head>
   <body>
     <div class="detail-container">
-      <!-- 헤더: 제목과 작성 정보 -->
+      <!-- 로그인정보 vs 작성자정보 비교 -->
+      <div id="member_id" style="display: none"></div>
+      <div id="writer_id" style="display: none"></div>
+
       <div class="detail-header">
-        <h1 class="detail-title"></h1>
+        <h1 class="detail-title">로딩 중...</h1>
         <div class="detail-info">
           <span class="info-item"></span>
+          <span class="login"></span>
           <span class="info-name"></span>
           <span class="info-created_at"></span>
         </div>
       </div>
 
-      <!-- 본문: 글 내용 -->
-      <div class="detail-content"></div>
+      <div class="detail-content">내용을 불러오고 있습니다.</div>
 
-      <!-- 하단: 버튼 영역 -->
       <div class="detail-footer">
         <a href="boardList.html" class="btn btn-list">목록</a>
         <div class="btn-group">
+          <!-- 등록(새 글 쓰기) 버튼 추가 -->
+          <a href="boardWrite.html" class="btn btn-write">등록</a>
           <a href="boardEdit.html" class="btn btn-edit">수정</a>
           <button class="btn btn-delete">삭제</button>
         </div>
       </div>
     </div>
+
     <script>
       const page = localStorage.getItem("page");
+      // ajax 호출.
       fetch("./api/board/" + page)
         .then((resp) => resp.json())
-        .then((data) => {
-          console.log(data);
+        .then(({ user, data }) => {
+          console.log(data); // {user: {...}, data: {...}}
           const [board] = data;
-          document.querySelector(".detail-title").innerHTML = board.title;
+          // member_id, writer_id 값 지정.
+          document.querySelector("#member_id").innerHTML = user.member_id;
+          document.querySelector("#writer_id").innerHTML = board.writer_id;
+
+          // 비활성화.
+          // if (user.member_id != board.writer_id) {
+          //   document.querySelector(".btn-delete").disabled = true;
+          // }
+
+          // 글내용 출력.
+          document.querySelector("span.login").innerHTML =
+            `ID: ${user.login_id}(${user.name})`; // 로그인 정보.
+          document.querySelector(".detail-title").innerHTML = board.title; // 글제목
           document.querySelector(".info-item").innerHTML =
-            `<b>번호</b> ${board.board_id}`;
+            `<b>번호</b> ${board.board_id}`; // 글번호.
+          // 작성자.
           document.querySelector(".info-name").innerHTML = board.name;
+          // 작성일시.
           document.querySelector(".info-created_at").innerHTML =
             `<b>작성일시</b> ${board.updated_at}`;
+
+          // 콘텐츠 줄바꿈 처리
           document.querySelector(".detail-content").innerHTML = board.content
             .split("\n")
-            .map((elem) => `<p>${elem}</p>`)
+            .map((elem) => `<p style="margin: 0 0 10px 0;">${elem}</p>`)
             .join("");
         })
-        .catch(console.log);
+        .catch((err) => {
+          console.error(err);
+          document.querySelector(".detail-content").innerHTML =
+            "데이터를 불러오는 데 실패했습니다.";
+        });
+
+      // 삭제 버튼 이벤트.
+      document.querySelector(".btn-delete").addEventListener("click", (e) => {
+        // 삭제.
+        fetch(`./api/board/${page}`, {
+          method: "delete",
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+          .then((resp) => resp.json())
+          .then((data) => {
+            if (data.retCode == "OK") {
+              alert("[삭제 성공] 글목록으로 이동.");
+              location.href = "boardList.html";
+            } else {
+              alert("삭제 실패");
+            }
+          })
+          .catch((err) => console.log(err));
+      });
+
+      // 수정 버튼 이벤트.
+      document.querySelector(".btn-edit").addEventListener("click", (e) => {
+        // 권한 체크.
+        const mid = document.querySelector("#member_id").innerHTML;
+        const wid = document.querySelector("#writer_id").innerHTML;
+        if (mid == wid) {
+          alert("수정 페이지로 이동합니다.");
+        } else {
+          alert("권한이 없습니다.");
+          return;
+        }
+      });
     </script>
   </body>
 </html>

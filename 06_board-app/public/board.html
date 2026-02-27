@@ -144,21 +144,30 @@
           writer_id: author,
           content: content,
         };
-
-        fetch("/api/board/create", {
+        console.log("호출", postData);
+        // ajax 호출.
+        fetch("./api/board", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(postData),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            title: postData.title,
+            content: postData.content,
+          }),
         })
           .then((resp) => resp.json())
           .then((data) => {
             console.log(data);
 
-            if (data.affectedRows === 1) {
+            if (data.retCode == "OK") {
+              // 성공 후 이동할 페이지(글목록 페이지)
               alert("[등록 성공] 글목록으로 이동.");
               // location.reload();
               location.href = "boardList.html";
             } else {
+              // 실패 후 에러 메세지(결과를 화면에 출력)
               alert("등록 실패");
             }
           })

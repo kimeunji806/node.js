@@ -27,6 +27,7 @@ async function insert(data) {
   INSERT INTO tbl_board(title, content, writer_id)
   values (?, ?, ?)
   `;
+  // return pool.query(sql, [title, content, writer_id]);
   const [result] = await pool.query(sql, [
     data.title,
     data.content,
@@ -35,5 +36,11 @@ async function insert(data) {
   return result;
 }
 
+// 글삭제(remove)
+async function remove(id) {
+  const sql = `delete from tbl_board where board_id = ?`;
+  return pool.query(sql, [id]);
+}
+
 // 모듈 exprot
-module.exports = { getList, getById, insert };
+module.exports = { getList, getById, insert, remove };
